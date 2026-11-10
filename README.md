@@ -137,18 +137,6 @@ src/
 └── index.css            Tailwind import and theme tokens
 ```
 
-## 🌱 Publishing to GitHub
-
-The repository includes a `.gitignore` for dependencies, build output, logs, local files, and common editor files.
-
-```sh
-git add .
-git commit -m "Add process scheduling simulator"
-git push -u origin main
-```
-
-Use your repository's branch name if it isn't `main`.
-
 ---
 
 <div align="center">
