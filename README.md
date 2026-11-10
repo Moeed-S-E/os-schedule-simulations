@@ -153,6 +153,6 @@ Use your repository's branch name if it isn't `main`.
 
 <div align="center">
 
-**Built by [Your Team Name]** · Add names, course, and semester here
+**Built by Moeed and Huzaifa** · OS Lab OEL, and semester 5th
 
 </div>
