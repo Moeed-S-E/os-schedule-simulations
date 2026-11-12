@@ -119,19 +119,13 @@ describe('process scheduling simulator', () => {
     expect(screen.queryByRole('heading', { name: 'Results' })).not.toBeInTheDocument()
   })
 
-  it('replays the Gantt chart and can show all segments again', async () => {
-    const user = userEvent.setup()
+  it('shows the complete Gantt chart without replay controls', () => {
     render(<App />)
 
     const chart = panel('Gantt chart')
-    const segments = () => chart.queryAllByTestId('gantt-segment')
-    expect(segments()).toHaveLength(6)
-
-    fireEvent.change(chart.getByLabelText('Replay'), { target: { value: '2' } })
-    expect(segments()).toHaveLength(1)
-
-    await user.click(chart.getByRole('button', { name: 'Show all' }))
-    expect(segments()).toHaveLength(6)
+    expect(chart.getAllByTestId('gantt-segment')).toHaveLength(6)
+    expect(chart.queryByLabelText('Replay')).not.toBeInTheDocument()
+    expect(chart.queryByRole('button', { name: 'Show all' })).not.toBeInTheDocument()
   })
 
   it('renders left and right scroll buttons only for the Gantt chart', () => {

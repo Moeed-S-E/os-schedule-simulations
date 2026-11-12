@@ -23,7 +23,6 @@ Build a process set and watch the FCFS Gantt chart and timing metrics update ins
 - FCFS scheduling: earliest-arrived processes run first; arrival ties follow process-list order.
 - Edit arrival and burst times, and add, remove, reset, or randomize up to 12 processes.
 - View completion, turnaround, and waiting times per process and as averages.
-- Replay the Gantt chart with its timeline slider; idle intervals are shown explicitly.
 - Responsive, light-only theme using `#b80c09`, `#0b4f6c`, `#01baef`, `#fbfbff`, and `#040f16`.
 
 ## How it works

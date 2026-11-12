@@ -6,17 +6,13 @@ import { SAMPLE, schedule } from './lib/scheduling.js'
 
 function App() {
   const [processes, setProcesses] = useState(SAMPLE)
-  const [upTo, setUpTo] = useState(Number.POSITIVE_INFINITY)
 
   const simulation = processes.length ? schedule(processes) : null
-
-  const resetReplay = () => setUpTo(Number.POSITIVE_INFINITY)
 
   const updateProcess = (index, field, value) => {
     const number = Math.floor(Number(value))
     const minimum = field === 'bt' ? 1 : 0
     const nextValue = Number.isFinite(number) ? Math.max(minimum, number) : minimum
-    resetReplay()
     setProcesses((current) =>
       current.map((process, processIndex) =>
         processIndex === index ? { ...process, [field]: nextValue } : process,
@@ -28,12 +24,10 @@ function App() {
 
   const addProcess = () => {
     if (processes.length >= 12) return
-    resetReplay()
     setProcesses((current) => renumberProcesses([...current, { id: '', at: 0, bt: 3 }]))
   }
 
   const removeProcess = (index) => {
-    resetReplay()
     setProcesses((current) =>
       renumberProcesses(current.filter((_, processIndex) => processIndex !== index)),
     )
@@ -46,12 +40,10 @@ function App() {
       at: randomInteger(0, 10),
       bt: randomInteger(1, 8),
     }))
-    resetReplay()
     setProcesses(renumberProcesses(randomized))
   }
 
   const resetSample = () => {
-    resetReplay()
     setProcesses(SAMPLE)
   }
 
@@ -79,9 +71,6 @@ function App() {
           <GanttChart
             segments={simulation.segs}
             total={simulation.total}
-            upTo={upTo}
-            onReplayChange={setUpTo}
-            onShowAll={resetReplay}
           />
           <SimulationResults simulation={simulation} />
         </>
