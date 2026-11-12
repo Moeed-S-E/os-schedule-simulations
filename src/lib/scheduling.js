@@ -1,36 +1,14 @@
-export const ALGOS = {
-  FCFS: { label: 'FCFS', key: (process) => [process.at, process.idx] },
-  SJF: { label: 'SJF', key: (process) => [process.bt, process.at, process.idx] },
-  Priority: { label: 'Priority', key: (process) => [process.pr, process.at, process.idx] },
-}
-
-export const COLORS = [
-  '#a9c48a',
-  '#e3b868',
-  '#dd9a84',
-  '#c6ad8d',
-  '#8fc09a',
-  '#e6b3a3',
-  '#cfcb7e',
-  '#b9a28a',
-]
+export const COLORS = ['#0b4f6c', '#01baef', '#b80c09']
 
 export const SAMPLE = [
-  { id: 'P1', at: 0, bt: 7, pr: 3 },
-  { id: 'P2', at: 2, bt: 4, pr: 1 },
-  { id: 'P3', at: 4, bt: 1, pr: 4 },
-  { id: 'P4', at: 5, bt: 4, pr: 2 },
-  { id: 'P5', at: 20, bt: 3, pr: 1 },
+  { id: 'P1', at: 0, bt: 7 },
+  { id: 'P2', at: 2, bt: 4 },
+  { id: 'P3', at: 4, bt: 1 },
+  { id: 'P4', at: 5, bt: 4 },
+  { id: 'P5', at: 20, bt: 3 },
 ]
 
-const compareKeys = (a, b) => {
-  for (let i = 0; i < a.length; i += 1) {
-    if (a[i] !== b[i]) return a[i] - b[i]
-  }
-  return 0
-}
-
-export function schedule(list, algo) {
+export function schedule(list) {
   const processes = list.map((process, idx) => ({ ...process, idx, done: false }))
   const segments = []
   const result = {}
@@ -47,7 +25,7 @@ export function schedule(list, algo) {
       continue
     }
 
-    ready.sort((a, b) => compareKeys(ALGOS[algo].key(a), ALGOS[algo].key(b)))
+    ready.sort((a, b) => a.at - b.at || a.idx - b.idx)
     const process = ready[0]
     const start = time
     const end = time + process.bt

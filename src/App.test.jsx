@@ -13,42 +13,28 @@ describe('process scheduling simulator', () => {
     vi.restoreAllMocks()
   })
 
-  it('renders the sample processes, schedule, results, metrics, and comparison', () => {
+  it('renders the FCFS sample processes, schedule, results, and metrics', () => {
     render(<App />)
 
     expect(screen.getByRole('heading', { name: 'Process scheduling simulator' })).toBeInTheDocument()
-    expect(panel('Algorithm').getByRole('button', { name: 'FCFS' })).toHaveAttribute(
-      'aria-pressed',
-      'true',
-    )
-    expect(panel('Processes').getByLabelText('P1 Arrival')).toHaveValue(0)
-    expect(panel('Processes').getByLabelText('P5 Priority')).toHaveValue(1)
+    expect(screen.getByText(/First Come First Served \(FCFS\)/)).toBeInTheDocument()
+    const processesPanel = panel('Processes')
+    expect(processesPanel.getByLabelText('P1 Arrival')).toHaveValue(0)
+    expect(processesPanel.getAllByRole('columnheader').map((header) => header.textContent)).toEqual([
+      'Process',
+      'Arrival',
+      'Burst',
+      'Actions',
+    ])
     expect(panel('Results').getByRole('row', { name: /P1 0 7 7 7 0/ })).toBeInTheDocument()
     expect(panel('Results').getByText('3.80')).toBeInTheDocument()
     expect(panel('Results').getByText('7.60')).toBeInTheDocument()
     expect(panel('Gantt chart').getByText(/Total time: 23/)).toBeInTheDocument()
-    expect(panel('Algorithm comparison').getByText('FCFS')).toBeInTheDocument()
-    expect(
-      panel('Algorithm comparison')
-        .getByRole('row', { name: /SJF 3\.20 7/ })
-        .querySelector('td:nth-child(2)'),
-    ).toHaveClass('text-accent')
-  })
-
-  it.each([
-    ['FCFS', 'First Come First Served:', '3.80'],
-    ['SJF', 'Shortest Job First:', '3.20'],
-    ['Priority', 'Priority: among arrived processes', '4.40'],
-  ])('selecting %s updates its description, active state, and computed metrics', async (algo, description, avg) => {
-    const user = userEvent.setup()
-    render(<App />)
-
-    const algorithmPanel = panel('Algorithm')
-    await user.click(algorithmPanel.getByRole('button', { name: algo }))
-
-    expect(algorithmPanel.getByRole('button', { name: algo })).toHaveAttribute('aria-pressed', 'true')
-    expect(algorithmPanel.getByText(new RegExp(description))).toBeInTheDocument()
-    expect(panel('Results').getByText(avg)).toBeInTheDocument()
+    expect(screen.getAllByRole('heading', { level: 2 }).map((heading) => heading.textContent)).toEqual([
+      'Processes',
+      'Gantt chart',
+      'Results',
+    ])
   })
 
   it('adds processes with the next id and disables adding at the 12-process limit', async () => {
@@ -77,22 +63,18 @@ describe('process scheduling simulator', () => {
     expect(processesPanel.getAllByRole('row')).toHaveLength(5)
   })
 
-  it('clamps burst and priority to one and floors fractional input', () => {
+  it('clamps burst to one and floors fractional input', () => {
     render(<App />)
 
     const processesPanel = panel('Processes')
     const burst = processesPanel.getByLabelText('P1 Burst')
     const arrival = processesPanel.getByLabelText('P1 Arrival')
-    const priority = processesPanel.getByLabelText('P1 Priority')
 
     fireEvent.change(burst, { target: { value: '0' } })
     fireEvent.change(arrival, { target: { value: '-3' } })
-    fireEvent.change(priority, { target: { value: '0' } })
-    fireEvent.change(priority, { target: { value: '2.8' } })
 
     expect(burst).toHaveValue(1)
     expect(arrival).toHaveValue(0)
-    expect(priority).toHaveValue(2)
   })
 
   it('randomizes a bounded set of valid processes', async () => {
@@ -107,7 +89,6 @@ describe('process scheduling simulator', () => {
     for (let index = 1; index <= 6; index += 1) {
       expect(processesPanel.getByLabelText(`P${index} Arrival`)).toHaveValue(5)
       expect(processesPanel.getByLabelText(`P${index} Burst`)).toHaveValue(5)
-      expect(processesPanel.getByLabelText(`P${index} Priority`)).toHaveValue(3)
     }
   })
 
@@ -161,9 +142,6 @@ describe('process scheduling simulator', () => {
     expect(panel('Gantt chart').getByRole('button', { name: 'Scroll left' })).toBeInTheDocument()
     expect(panel('Processes').queryByRole('button', { name: 'Scroll left' })).not.toBeInTheDocument()
     expect(panel('Results').queryByRole('button', { name: 'Scroll right' })).not.toBeInTheDocument()
-    expect(
-      panel('Algorithm comparison').queryByRole('button', { name: 'Scroll left' }),
-    ).not.toBeInTheDocument()
   })
 
   it('scroll buttons move the Gantt timeline in the selected direction', async () => {

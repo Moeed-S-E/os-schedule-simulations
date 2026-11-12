@@ -1,33 +1,20 @@
-import { useMemo, useState } from 'react'
-import AlgorithmComparison from './components/AlgorithmComparison.jsx'
-import AlgorithmSelector from './components/AlgorithmSelector.jsx'
+import { useState } from 'react'
 import GanttChart from './components/GanttChart.jsx'
 import ProcessEditor from './components/ProcessEditor.jsx'
 import SimulationResults from './components/SimulationResults.jsx'
-import { ALGOS, SAMPLE, schedule } from './lib/scheduling.js'
+import { SAMPLE, schedule } from './lib/scheduling.js'
 
 function App() {
   const [processes, setProcesses] = useState(SAMPLE)
-  const [algo, setAlgo] = useState('FCFS')
   const [upTo, setUpTo] = useState(Number.POSITIVE_INFINITY)
 
-  const simulation = useMemo(
-    () => (processes.length ? schedule(processes, algo) : null),
-    [processes, algo],
-  )
-  const comparisons = useMemo(
-    () =>
-      processes.length
-        ? Object.keys(ALGOS).map((key) => ({ key, ...schedule(processes, key) }))
-        : [],
-    [processes],
-  )
+  const simulation = processes.length ? schedule(processes) : null
 
   const resetReplay = () => setUpTo(Number.POSITIVE_INFINITY)
 
   const updateProcess = (index, field, value) => {
     const number = Math.floor(Number(value))
-    const minimum = field === 'bt' || field === 'pr' ? 1 : 0
+    const minimum = field === 'bt' ? 1 : 0
     const nextValue = Number.isFinite(number) ? Math.max(minimum, number) : minimum
     resetReplay()
     setProcesses((current) =>
@@ -42,7 +29,7 @@ function App() {
   const addProcess = () => {
     if (processes.length >= 12) return
     resetReplay()
-    setProcesses((current) => renumberProcesses([...current, { id: '', at: 0, bt: 3, pr: 1 }]))
+    setProcesses((current) => renumberProcesses([...current, { id: '', at: 0, bt: 3 }]))
   }
 
   const removeProcess = (index) => {
@@ -58,7 +45,6 @@ function App() {
       id: '',
       at: randomInteger(0, 10),
       bt: randomInteger(1, 8),
-      pr: randomInteger(1, 5),
     }))
     resetReplay()
     setProcesses(renumberProcesses(randomized))
@@ -69,22 +55,16 @@ function App() {
     setProcesses(SAMPLE)
   }
 
-  const changeAlgorithm = (nextAlgo) => {
-    resetReplay()
-    setAlgo(nextAlgo)
-  }
-
   return (
     <main className="mx-auto w-full max-w-245 px-4.5 pb-14 pt-7 max-sm:px-3.5 max-sm:pb-10 max-sm:pt-5.5">
       <header className="mb-6.5">
         <h1 className="mb-1 text-[28px] font-extrabold tracking-tight">Process scheduling simulator</h1>
         <p className="max-w-[60ch] text-muted">
-          Non-preemptive CPU scheduling. Enter processes, pick an algorithm, and read the timeline and
-          metrics.
+          First Come First Served (FCFS) scheduling. Enter processes and explore the timeline and
+          timing metrics.
         </p>
       </header>
 
-      <AlgorithmSelector selected={algo} onSelect={changeAlgorithm} />
       <ProcessEditor
         processes={processes}
         onUpdate={updateProcess}
@@ -104,7 +84,6 @@ function App() {
             onShowAll={resetReplay}
           />
           <SimulationResults simulation={simulation} />
-          <AlgorithmComparison comparisons={comparisons} />
         </>
       )}
     </main>

@@ -1,10 +1,11 @@
-import ActionButton from './ActionButton.jsx'
 import Panel from './Panel.jsx'
+
+const buttonClass =
+  'rounded-[14px] bg-surface px-4.5 py-2.5 font-bold shadow-raised transition-shadow hover:shadow-inset active:shadow-inset focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-accent disabled:cursor-not-allowed disabled:opacity-55'
 
 const fields = [
   { key: 'at', label: 'Arrival', min: 0 },
   { key: 'bt', label: 'Burst', min: 1 },
-  { key: 'pr', label: 'Priority', min: 1 },
 ]
 
 function ProcessEditor({ processes, onUpdate, onAdd, onRemove, onRandomize, onReset }) {
@@ -38,13 +39,14 @@ function ProcessEditor({ processes, onUpdate, onAdd, onRemove, onRandomize, onRe
                   </td>
                 ))}
                 <td className="px-2.5 py-1">
-                  <ActionButton
-                    variant="danger"
+                  <button
+                    type="button"
+                    className={`${buttonClass} px-3 py-1.5 text-warning`}
                     aria-label={`Remove ${process.id}`}
                     onClick={() => onRemove(index)}
                   >
                     Remove
-                  </ActionButton>
+                  </button>
                 </td>
               </tr>
             ))}
@@ -52,11 +54,20 @@ function ProcessEditor({ processes, onUpdate, onAdd, onRemove, onRandomize, onRe
         </table>
       </div>
       <div className="mt-2.5 flex flex-wrap items-center gap-3.5">
-        <ActionButton variant="primary" onClick={onAdd} disabled={processes.length >= 12}>
+        <button
+          type="button"
+          className={`${buttonClass} text-accent`}
+          onClick={onAdd}
+          disabled={processes.length >= 12}
+        >
           Add process
-        </ActionButton>
-        <ActionButton onClick={onRandomize}>Random set</ActionButton>
-        <ActionButton onClick={onReset}>Reset sample</ActionButton>
+        </button>
+        <button type="button" className={`${buttonClass} text-app`} onClick={onRandomize}>
+          Random set
+        </button>
+        <button type="button" className={`${buttonClass} text-app`} onClick={onReset}>
+          Reset sample
+        </button>
       </div>
       {processes.length === 0 && (
         <p className="mt-2 text-[13px] text-warning">Add at least one process to run the simulation.</p>

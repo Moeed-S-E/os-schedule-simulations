@@ -1,5 +1,4 @@
 import { COLORS } from '../lib/scheduling.js'
-import ActionButton from './ActionButton.jsx'
 import HorizontalScroller from './HorizontalScroller.jsx'
 import Panel from './Panel.jsx'
 
@@ -25,10 +24,14 @@ function GanttChart({ segments, total, upTo, onReplayChange, onShowAll }) {
                 <div
                   key={`${segment.pid}-${segment.start}-${index}`}
                   data-testid="gantt-segment"
-                  className={`absolute bottom-2 top-2 flex items-center justify-center overflow-hidden rounded-[10px] text-[13px] font-extrabold text-[#263020] ${
+                  className={`absolute bottom-2 top-2 flex items-center justify-center overflow-hidden rounded-[10px] text-[13px] font-extrabold ${
                     segment.idle
                       ? 'border border-dashed border-muted bg-transparent font-semibold text-muted shadow-none'
-                      : 'shadow-raised'
+                      : processNumber % COLORS.length === 2
+                        ? 'text-app'
+                        : 'text-[#fbfbff]'
+                  } ${
+                    segment.idle ? '' : 'shadow-raised'
                   }`}
                   style={{
                     left: `${(segment.start / total) * 100}%`,
@@ -68,7 +71,13 @@ function GanttChart({ segments, total, upTo, onReplayChange, onShowAll }) {
           value={Math.min(upTo, total)}
           onChange={(event) => onReplayChange(Number(event.target.value))}
         />
-        <ActionButton onClick={onShowAll}>Show all</ActionButton>
+        <button
+          type="button"
+          className="rounded-[14px] bg-surface px-4.5 py-2.5 font-bold text-app shadow-raised transition-shadow hover:shadow-inset active:shadow-inset focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-accent"
+          onClick={onShowAll}
+        >
+          Show all
+        </button>
       </div>
       <p className="mt-1.5 text-[13px] text-muted">
         Dashed blocks are idle time, when no process has arrived yet. Total time: {total}.
